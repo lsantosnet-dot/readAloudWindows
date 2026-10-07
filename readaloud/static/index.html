@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReadAloud</title>
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="toolbar">
+    <h1>ReadAloud</h1>
+    <div class="toolbar-actions">
+      <label class="speed" title="Velocidade da fala">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a9 9 0 0 0-8.5 12h17A9 9 0 0 0 12 4zm0 2a7 7 0 0 1 6.9 8H5.1A7 7 0 0 1 12 6zm3.6 1.9-3.1 4.3a1.5 1.5 0 1 1-1.4-.3l3.3-4.3z"/></svg>
+        <input id="speed" type="range" min="0.5" max="2" step="0.05" value="1">
+        <output id="speed-value">1.00×</output>
+      </label>
+      <button id="import-btn" class="btn" type="button" title="Importar arquivos de texto">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm7-16-5 5h3v6h4V9h3l-5-5z"/></svg>
+        Importar
+      </button>
+      <input id="file-input" type="file" multiple hidden
+             accept=".txt,.text,.md,.markdown,.mdown,.rst,.log,.csv,.tsv,.json,.xml,.html,.htm,.srt,.vtt,.ini,.yaml,.yml,text/*">
+      <button id="settings-btn" class="btn btn-icon" type="button" title="Vozes e ajustes">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+      </button>
+      <button id="clear-all-btn" class="btn btn-danger" type="button" title="Apagar todos os cards">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-3 6h12l-1 12H7L6 9z"/></svg>
+        Apagar tudo
+      </button>
+    </div>
+  </header>
+
+  <div id="notice" class="notice" hidden></div>
+
+  <main>
+    <section id="empty" class="empty" hidden>
+      <div class="empty-box">
+        <p class="empty-title">Nenhum texto ainda</p>
+        <p>Pressione <kbd>Ctrl</kbd> + <kbd>V</kbd> para colar um texto, clique em <strong>Importar</strong>
+          ou arraste arquivos <code>.txt</code> / <code>.md</code> para esta janela.</p>
+      </div>
+    </section>
+    <ul id="cards" class="cards"></ul>
+  </main>
+
+  <div id="drop-overlay" class="drop-overlay" hidden>Solte os arquivos para importar</div>
+
+  <dialog id="settings-dialog" class="dialog">
+    <form method="dialog">
+      <h2>Vozes e ajustes</h2>
+      <p class="muted">Voz padrão de cada idioma (cada card pode usar outra).</p>
+      <div id="default-voices"></div>
+      <label class="field">
+        <span>Idioma quando a detecção não tiver certeza</span>
+        <select id="default-lang"></select>
+      </label>
+      <p class="muted small">
+        Pasta de vozes: <code id="voices-dir"></code><br>
+        Para adicionar vozes, copie os pares <code>.onnx</code> + <code>.onnx.json</code> para essa pasta
+        e clique em "Recarregar vozes".
+      </p>
+      <div class="dialog-actions">
+        <button id="open-voices-btn" class="btn" type="button">Abrir pasta</button>
+        <button id="refresh-voices-btn" class="btn" type="button">Recarregar vozes</button>
+        <button class="btn btn-primary" value="close">Fechar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <template id="card-template">
+    <li class="card">
+      <div class="card-head">
+        <span class="badge lang"></span>
+        <span class="card-source"></span>
+        <time class="card-date"></time>
+        <button class="btn-icon delete" type="button" title="Apagar este card">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-3 6h12l-1 12H7L6 9zm4 2v8h2v-8h-2zm4 0v8h2v-8h-2z"/></svg>
+        </button>
+      </div>
+      <p class="card-text"></p>
+      <button class="link more" type="button" hidden>mostrar mais</button>
+      <div class="card-foot">
+        <button class="play" type="button" title="Ouvir">
+          <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <button class="stop btn-icon" type="button" title="Parar" disabled>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>
+        </button>
+        <span class="progress"></span>
+        <select class="voice" title="Voz deste card"></select>
+      </div>
+    </li>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

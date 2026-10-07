@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+dist/
+*.spec.bak
+.pytest_cache/
+# vozes baixadas ficam em %LOCALAPPDATA%\ReadAloud, mas por garantia:
+*.onnx
+*.onnx.json
